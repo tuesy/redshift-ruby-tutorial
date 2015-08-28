@@ -6,17 +6,21 @@ git clone git@github.com:tuesy/redshift-ruby-tutorial.git
 cd redshift-ruby-tutorial
 ```
 ### Setup your environment variables
-Note: use your own cluster credentials
+Edit your ~/.bash_profile:
 ```
-# ~/.bash_profile
+# (add to your)
 export REDSHIFT_HOST=redshift-ruby-tutorial.ccmj2nxbsay7.us-east-1.redshift.amazonaws.com
 export REDSHIFT_PORT=5439
 export REDSHIFT_USER=deploy
 export REDSHIFT_PASSWORD=
 export REDSHIFT_DATABASE=analytics
 export REDSHIFT_BUCKET=redshift-ruby-tutorial
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
 ```
-###
-```bundle exec rake db:setup```
+```source ~/.bash_profile```
+### Run the demo
 ```
-
+bundle install
+bundle exec rake db:setup
+```
