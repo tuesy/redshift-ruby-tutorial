@@ -21,6 +21,8 @@ Reload your environment:
 
 ```source ~/.bash_profile```
 ### Run the demo
+This shows that we're loading data into Redshift and then querying it.
+
 ```
 bundle install
 bundle exec rake db:setup
@@ -31,7 +33,9 @@ Loader.load
 RedshiftUser.count
 RedshiftUser.first
 ```
-### You should see something like this
+
+The output should look like this:
+
 ```ruby
 ~/git/redshift-ruby-tutorial(master)$ bundle exec rails c
 Loading development environment (Rails 4.2.3)
