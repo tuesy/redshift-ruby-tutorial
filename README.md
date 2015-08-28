@@ -1,3 +1,7 @@
+## Redshift + Ruby Tutorial
+
+TODO: add link to blog post
+
 ## Usage
 
 ### Clone this repo
@@ -11,11 +15,11 @@ Edit your ~/.bash_profile:
 export REDSHIFT_HOST=redshift-ruby-tutorial.ccmj2nxbsay7.us-east-1.redshift.amazonaws.com
 export REDSHIFT_PORT=5439
 export REDSHIFT_USER=deploy
-export REDSHIFT_PASSWORD=
+export REDSHIFT_PASSWORD=<your password>
 export REDSHIFT_DATABASE=analytics
 export REDSHIFT_BUCKET=redshift-ruby-tutorial
-export AWS_ACCESS_KEY_ID=
-export AWS_SECRET_ACCESS_KEY=
+export AWS_ACCESS_KEY_ID=<your aws key id>
+export AWS_SECRET_ACCESS_KEY=<your access key>
 ```
 Reload your environment:
 
