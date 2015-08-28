@@ -19,16 +19,17 @@ export AWS_SECRET_ACCESS_KEY=
 ```
 Reload your environment:
 
-```bash
-source ~/.bash_profile
-```
+```source ~/.bash_profile```
 ### Run the demo
-```bash
+```
 bundle install
 bundle exec rake db:setup
 bundle exec rails c
+RedshiftUser.count
 require 'loader'
 Loader.load
+RedshiftUser.count
+RedshiftUser.first
 ```
 ### You should see something like this
 ```ruby
