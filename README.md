@@ -1,6 +1,6 @@
 ## Redshift + Ruby Tutorial
 
-TODO: add link to blog post
+More details in the [blog post](https://www.credible.com/code/?p=4)
 
 ## Usage
 
