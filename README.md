@@ -3,7 +3,11 @@ Published on the [Credible Blog](https://www.credible.com/code/setting-up-a-data
 
 ![Screenshot](https://www.credible.com/code/wp-content/uploads/2015/09/AUvn49gey8Y-thumb.png)
 
-Most startups need a robust solution for storing large amounts of data for analytics. Perhaps you're running a video app trying to understand user drop-off or you're a SaaS trying to understand client usage patterns. You might start with a few tables in your primary database. Soon you may create a separate web app with a nightly cron job to sync data. Before you know it, you have more data than you can handle, jobs are taking way too long, and you're being asked to integrate data from more sources. This is where a data warehouse comes in handy. This tutorial will show you how to setup your own simple, inexpensive, and scalable data warehouse using AWS Redshift and Ruby. We'll provide sample sample code that will show you to how to extract, transform, and load (ETL) data into Redshift as well as how to access the data from a Rails app.
+Most startups eventually need a robust solution for storing large amounts of data for analytics. Perhaps you're running a video app trying to understand user drop-off or you're trying to understand user behavior in your website like we do at Credible. 
+
+You might start with a few tables in your primary database. Soon you may create a separate web app with a nightly cron job to sync data. Before you know it, you have more data than you can handle, jobs are taking way too long, and you're being asked to integrate data from more sources. This is where a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) comes in handy. 
+
+In the past, only big companies like Amazon had data warehouses because they were expensive and hard setup and maintain. With AWS Redshift and Ruby, we'll show you how to setup your own simple, inexpensive, and scalable data warehouse. We'll provide sample code that will show you to how to extract, transform, and load (ETL) data into Redshift as well as how to access the data from a Rails app.
 
 ## Part I: Setting up AWS Redshift
 
