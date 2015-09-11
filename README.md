@@ -35,7 +35,7 @@ By default, nothing is allowed to connect to the cluster. You can create one for
 
 ### Verifying Your Cluster
 
-Now, let's try connecting to your cluster using [Postico](https://eggerapps.at/postico/). You'll need to create a Favorite and fill in the info you used to create the cluster. 
+Now, let's try connecting to your cluster using [Postico](https://eggerapps.at/postico/). You'll need to create a Favorite and fill in the info you used to create the cluster. Note that the Endpoint url you got from the Redshift cluster contains both the host and port--you'll need to put them in separate fields. 
 
 ![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Postico_Favorites.png)
 
@@ -45,7 +45,7 @@ If you're successful, you'll see something like this.
 
 Congrats, you've created your first data warehouse! For your Production environment, you may want to beef up the security or use a multi-node cluster for redundancy and performance.
 
-The next step is to configure Redshift so we can load data into it. Redshift acts like Postgres for the most part. For example, you need to create tables ahead of time and you'll need to specify the data types for each column. There are some differences that may trip you up. The following are some examples of Rails data types and how they should be mapped to Redshift:
+The next step is to configure Redshift so we can load data into it. Redshift acts like Postgres for the most part. For example, you need to create tables ahead of time and you'll need to specify the data types for each column. There are some differences that may trip you up. We ran into issues at first because the default Rails column types don't map correctly. The following are some examples of Rails data types and how they should be mapped to Redshift:
 
 * integer => int
 * string => varchar
@@ -55,11 +55,11 @@ The next step is to configure Redshift so we can load data into it. Redshift act
 * text => varchar(65535)
 * decimal(precision, scale) => decimal(precision, scale)
 
-Note that the ID column should be of type "bigint". Please see the Redshift documentation for more details. Here's how we mapped the "users" table for the sample app.
+Note that the ID column should be of type "bigint". The [Redshift documentation](https://aws.amazon.com/documentation/redshift/) has more details. Here's how we mapped the "users" table for the sample app.
 
 ![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/redshift-ruby-tutorial_%E2%80%93_analytics_and_schema_rb_%E2%80%94_redshift-ruby-tutorial_and_3__bash.png)
 
-You should also note that we did not map all fields. You'll want to omit sensitive or irrelevant fields or add fields on an as-needed basis to reduce complexity and costs.
+You should also note that we didn't map all fields. You'll want to omit sensitive fields like "password" or add fields on an as-needed basis to reduce complexity and costs.
 
 ## Part 2: Extracting, Transforming, and Loading (ETL)
 
@@ -69,7 +69,7 @@ You'll need to create an S3 bucket either via the AWS Console or through their A
 
 ### Setup the Sample App
 
-We created a sample Rails app for this part. It contains a User table,  some seed data, and a Loader class that will perform ETL. The high-level approach is to output the User data to CSV files, upload the files to an AWS S3 bucket, and then trigger Redshift to load the CSV files.
+We created a [sample Rails app](https://github.com/tuesy/redshift-ruby-tutorial) for this part. It contains a User table,  some seed data, and a Loader class that will perform ETL. The high-level approach is to output the User data to CSV files, upload the files to an AWS S3 bucket, and then trigger Redshift to load the CSV files.
 
 Let's start by cloning the app:
 
@@ -198,7 +198,9 @@ db = PG.connect(
 )
 ```
 
-This is the heart of the process. The source data comes from the User table. We're fetching users in fixed-size batches to avoid timeouts. For now, we're querying for all users, but you can modify this to return only active users, for example. Don't be alarmed by all the nested blocks--we're just creating temporary files, generating an array with the values for each column, and then compressing the data using gzip so we can save time and money. We're not doing any transformation here, but you could do things like format a column or generate new columns. We upload each CSV file to our S3 bucket after processing each batch but you could upload after everything is generated if desired.
+This is the heart of the process. The source data comes from the User table. We're fetching users in fixed-size batches to avoid timeouts. For now, we're querying for all users, but you can modify this to return only active users, for example. 
+
+Don't be alarmed by all the nested blocks--we're just creating temporary files, generating an array with the values for each column, and then compressing the data using gzip so we can save time and money. We're not doing any transformation here, but you could do things like format a column or generate new columns. We upload each CSV file to our S3 bucket after processing each batch but you could upload after everything is generated if desired.
 
 ```ruby
 # extract data to CSV files and upload to S3
@@ -244,7 +246,10 @@ There are other improvements you can add. For example, using a manifest file, yo
 
 ## Links
 
-* Sample Rails app on Github
-* Postico
-* AWS Redshift documentation
-* activerecord4-redshift-adapter
+* [Sample Rails app on Github](https://github.com/tuesy/redshift-ruby-tutorial)
+* [Postico](https://eggerapps.at/postico/)
+* [Redshift documentation](https://aws.amazon.com/documentation/redshift/)
+* [activerecord adapter](https://github.com/aamine/activerecord4-redshift-adapter)
+* [@mankindforward](https://twitter.com/mankindforward)
+
+We're hiring! Checkout our [jobs page](https://angel.co/credible/jobs/)
