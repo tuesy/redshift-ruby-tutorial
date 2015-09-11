@@ -3,7 +3,7 @@ Published on the [Credible Blog](https://www.credible.com/code/setting-up-a-data
 
 ![Screenshot](https://www.credible.com/code/wp-content/uploads/2015/09/AUvn49gey8Y-thumb.png)
 
-Most startups eventually need a robust solution for storing large amounts of data for analytics. Perhaps you're running a video app trying to understand user drop-off or you're trying to understand user behavior on your website like we do at Credible. 
+Most startups eventually need a robust solution for storing large amounts of data for analytics. Perhaps you're running a video app trying to understand user drop-off or you're studying user behavior on your website like we do at Credible. 
 
 You might start with a few tables in your primary database. Soon you may create a separate web app with a nightly cron job to sync data. Before you know it, you have more data than you can handle, jobs are taking way too long, and you're being asked to integrate data from more sources. This is where a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) comes in handy. It allows your team to store and query terabytes or even petabytes of data from many sources without writing a bunch of custom code.
 
@@ -45,7 +45,7 @@ If you're successful, you'll see something like this.
 
 Congrats, you've created your first data warehouse! For your Production environment, you may want to beef up the security or use a multi-node cluster for redundancy and performance.
 
-The next step is to configure Redshift so we can load data into it. Redshift acts like Postgres for the most part. For example, you need to create tables ahead of time and you'll need to specify the data types for each column. There are some differences that may trip you up. We ran into issues at first because the default Rails column types don't map correctly. The following are some examples of Rails data types and how they should be mapped to Redshift:
+The next step is to configure Redshift so we can load data into it. Redshift acts like Postgres for the most part. For example, you need to create tables ahead of time and you'll need to specify the data types for each column. There are some differences that may trip you up. We ran into issues at first because the default Rails data types don't map correctly. The following are some examples of Rails data types and how they should be mapped to Redshift:
 
 * integer => int
 * string => varchar
