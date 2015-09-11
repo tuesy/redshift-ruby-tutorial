@@ -3,25 +3,25 @@ Published on the [Credible Blog](https://www.credible.com/code/setting-up-a-data
 
 ![Screenshot](https://www.credible.com/code/wp-content/uploads/2015/09/AUvn49gey8Y-thumb.png)
 
-Most startups eventually need a robust solution for storing large amounts of data for analytics. Perhaps you're running a video app trying to understand user drop-off or you're trying to understand user behavior in your website like we do at Credible. 
+Most startups eventually need a robust solution for storing large amounts of data for analytics. Perhaps you're running a video app trying to understand user drop-off or you're trying to understand user behavior on your website like we do at Credible. 
 
-You might start with a few tables in your primary database. Soon you may create a separate web app with a nightly cron job to sync data. Before you know it, you have more data than you can handle, jobs are taking way too long, and you're being asked to integrate data from more sources. This is where a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) comes in handy. 
+You might start with a few tables in your primary database. Soon you may create a separate web app with a nightly cron job to sync data. Before you know it, you have more data than you can handle, jobs are taking way too long, and you're being asked to integrate data from more sources. This is where a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) comes in handy. It allows your team to store and query terabytes or even petabytes of data from many sources without writing a bunch of custom code.
 
-In the past, only big companies like Amazon had data warehouses because they were expensive and hard setup and maintain. With AWS Redshift and Ruby, we'll show you how to setup your own simple, inexpensive, and scalable data warehouse. We'll provide sample code that will show you to how to extract, transform, and load (ETL) data into Redshift as well as how to access the data from a Rails app.
+In the past, only big companies like Amazon had data warehouses because they were expensive, hard to setup, and time-consuming to maintain. With AWS Redshift and Ruby, we'll show you how to setup your own simple, inexpensive, and scalable data warehouse. We'll provide [sample code](https://github.com/tuesy/redshift-ruby-tutorial) that will show you to how to extract, transform, and load (ETL) data into Redshift as well as how to access the data from a Rails app.
 
 ## Part I: Setting up AWS Redshift
 
 ### Creating a Redshift Cluster
 
-We chose AWS's Redshift offering because it's easy to set up, inexpensive (it's AWS after all), and its interface is pretty similar to that of Postgres so you can manage it using tools like Postico, a Postgres database manager for OSX, and use with Ruby via an activerecord adapter. Let's begin by logging into your AWS console and creating a new Redshift cluster. Please write down your cluster info as we'll need it later.
+We chose AWS's Redshift offering because it's easy to set up, inexpensive (it's AWS after all), and its interface is pretty similar to that of Postgres so you can manage it using tools like [Postico](https://eggerapps.at/postico/), a Postgres database manager for OSX, and use with Ruby via an [activerecord adapter](https://github.com/aamine/activerecord4-redshift-adapter). Let's begin by logging into your AWS console and creating a new Redshift cluster. Make sure to write down your cluster info as we'll need it later.
 
 ![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Redshift_%C2%B7_AWS_Console_4.png)
 
-We're going with a single node here for development and QA environments but for production, you'll want to create a multi-node cluster.
+We're going with a single node here for development and QA environments but for production, you'll want to create a multi-node cluster so you can get faster importing and querying as well as handle more data.
 
 ![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Redshift_%C2%B7_AWS_Console_3.png)
 
-You can optionally encrypt the data and enable other security settings here. You can go with defaults the rest of the way for the purposes of this tutorial. Note that you'll start incurring charges once you create the cluster.
+You can optionally encrypt the data and enable other security settings here. You can go with defaults the rest of the way for the purposes of this tutorial. Note that you'll start incurring charges once you create the cluster ($0.25 an hour for DC1.Large and first 2 months free).
 
 ![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Redshift_%C2%B7_AWS_Console_2.png)
 
@@ -35,7 +35,7 @@ By default, nothing is allowed to connect to the cluster. You can create one for
 
 ### Verifying Your Cluster
 
-Now, let's try connecting to your cluster using Postico. You'll need to create a Favorite and fill in the info you used to create the cluster. Note that the "Host" value should not contain the port on the end.
+Now, let's try connecting to your cluster using [Postico](https://eggerapps.at/postico/). You'll need to create a Favorite and fill in the info you used to create the cluster. 
 
 ![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Postico_Favorites.png)
 
