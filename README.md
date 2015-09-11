@@ -50,7 +50,8 @@ The next step is to configure Redshift so we can load data into it. Redshift act
 * boolean => bool
 * text => varchar(65535)
 * decimal(precision, scale) => decimal(precision, scale)
-* You should also note that the ID column should be of type "bigint". Please see the Redshift documentation for more * details. Here's how we mapped the "users" table for the sample app.
+
+Note that the ID column should be of type "bigint". Please see the Redshift documentation for more details. Here's how we mapped the "users" table for the sample app.
 
 ![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/redshift-ruby-tutorial_%E2%80%93_analytics_and_schema_rb_%E2%80%94_redshift-ruby-tutorial_and_3__bash.png)
 
@@ -68,14 +69,14 @@ We created a sample Rails app for this part. It contains a User table,  some see
 
 Let's start by cloning the app:
 
-```
+```bash
 git clone git@github.com:tuesy/redshift-ruby-tutorial.git
 cd redshift-ruby-tutorial
 ```
 
 Next, update your environment variables by editing and sourcing the ~/.bash_profile:
 
-```
+```bash
 # redshift-ruby-tutorial
 export REDSHIFT_HOST=redshift-ruby-tutorial.ccmj2nxbsay7.us-east-1.redshift.amazonaws.com
 export REDSHIFT_PORT=5439
@@ -87,14 +88,14 @@ export REDSHIFT_BUCKET=redshift-ruby-tutorial
 
 We're ready to bundle our gems, create our database, and seed the dummy data:
 
-```
+```bash
 bundle install
 bundle exec rake db:setup
 ```
 
 Before we run ETL, let's check the connection to Redshift. This should return "0 users" because we haven't loaded any data yet:
 
-```
+```bash
 bundle exec rails c
 RedshiftUser.count
 ```
@@ -237,7 +238,7 @@ EOS
 
 There are other improvements you can add. For example, using a manifest file, you can have full control over which CSVs are loaded. Also, while the current approach truncates and reloads the table on each run, which can be slow, you can do incremental loads.
 
-### Links
+## Links
 
 * Sample Rails app on Github
 * Postico
