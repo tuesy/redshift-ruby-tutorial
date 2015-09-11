@@ -78,7 +78,7 @@ git clone git@github.com:tuesy/redshift-ruby-tutorial.git
 cd redshift-ruby-tutorial
 ```
 
-Next, update your environment variables by editing and sourcing the ~/.bash_profile:
+Next, update your environment variables by editing and sourcing the ~/.bash_profile. You should use the info from  when you created your cluster.
 
 ```bash
 # redshift-ruby-tutorial
