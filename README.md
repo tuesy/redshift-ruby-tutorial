@@ -65,7 +65,7 @@ You should also note that we didn't map all fields. You'll want to omit sensitiv
 
 ### Create an S3 Bucket
 
-You'll need to create an S3 bucket either via the AWS Console or through their API. For this sample, we've created one called "redshift-ruby-tutorial.
+You'll need to create an S3 bucket either via the AWS Console or through their API. For this sample, we've created one called "redshift-ruby-tutorial".
 
 ### Setup the Sample App
 
