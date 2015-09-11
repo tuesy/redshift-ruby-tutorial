@@ -244,7 +244,7 @@ EOS
 
 There are other improvements you can add. For example, using a manifest file, you can have full control over which CSVs are loaded. Also, while the current approach truncates and reloads the table on each run, which can be slow, you can do incremental loads.
 
-### Links
+## Links
 
 * [Sample Rails app on Github](https://github.com/tuesy/redshift-ruby-tutorial)
 * [Postico](https://eggerapps.at/postico/)
