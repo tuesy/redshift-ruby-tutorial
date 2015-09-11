@@ -1,7 +1,7 @@
 # Setting up a Data Warehouse with AWS Redshift and Ruby
 Published on the [Credible Blog](https://www.credible.com/code/setting-up-a-data-warehouse-with-aws-redshift-and-ruby/)
 
-https://www.credible.com/code/wp-content/uploads/2015/09/AUvn49gey8Y-thumb.png
+![Screenshot](https://www.credible.com/code/wp-content/uploads/2015/09/AUvn49gey8Y-thumb.png)
 
 Most startups need a robust solution for storing large amounts of data for analytics. Perhaps you're running a video app trying to understand user drop-off or you're a SaaS trying to understand client usage patterns. You might start with a few tables in your primary database. Soon you may create a separate web app with a nightly cron job to sync data. Before you know it, you have more data than you can handle, jobs are taking way too long, and you're being asked to integrate data from more sources. This is where a data warehouse comes in handy. This tutorial will show you how to setup your own simple, inexpensive, and scalable data warehouse using AWS Redshift and Ruby. We'll provide sample sample code that will show you to how to extract, transform, and load (ETL) data into Redshift as well as how to access the data from a Rails app.
 
@@ -15,89 +15,101 @@ We chose AWS's Redshift offering because it's easy to set up, inexpensive (it's 
 
 We're going with a single node here for development and QA environments but for production, you'll want to create a multi-node cluster.
 
-Redshift_·_AWS_Console_3
+![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Redshift_%C2%B7_AWS_Console_3.png)
 
 You can optionally encrypt the data and enable other security settings here. You can go with defaults the rest of the way for the purposes of this tutorial. Note that you'll start incurring charges once you create the cluster.
 
-Redshift_·_AWS_Console_2
+![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Redshift_%C2%B7_AWS_Console_2.png)
 
 When you're done, you'll see a summary page for the cluster. Please jot down the hostname in the Endpoint.
 
-Redshift_·_AWS_Console_1
+![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Redshift_%C2%B7_AWS_Console_1.png)
 
 By default, nothing is allowed to connect to the cluster. You can create one for your computer by going to Security > Add Connection Type > Authorize--AWS will automatically fill in your current IP address for convenience.
 
-Redshift_·_AWS_Console
+![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Redshift_%C2%B7_AWS_Console.png)
 
-Verifying Your Cluster
+### Verifying Your Cluster
 
 Now, let's try connecting to your cluster using Postico. You'll need to create a Favorite and fill in the info you used to create the cluster. Note that the "Host" value should not contain the port on the end.
 
-Postico_Favorites
+![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/Postico_Favorites.png)
 
 If you're successful, you'll see something like this.
 
-redshift-ruby-tutorial_–_analytics_and__bash_profile_—_redshift-ruby-tutorial_and_3__bash
+![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/redshift-ruby-tutorial_%E2%80%93_analytics_and__bash_profile_%E2%80%94_redshift-ruby-tutorial_and_3__bash.png)
 
 Congrats, you've created your first data warehouse! For your Production environment, you may want to beef up the security or use a multi-node cluster for redundancy and performance.
 
 The next step is to configure Redshift so we can load data into it. Redshift acts like Postgres for the most part. For example, you need to create tables ahead of time and you'll need to specify the data types for each column. There are some differences that may trip you up. The following are some examples of Rails data types and how they should be mapped to Redshift:
 
-integer => int
-string => varchar
-date => date
-datetime => timestamp
-boolean => bool
-text => varchar(65535)
-decimal(precision, scale) => decimal(precision, scale)
-You should also note that the ID column should be of type "bigint". Please see the Redshift documentation for more details. Here's how we mapped the "users" table for the sample app.
+* integer => int
+* string => varchar
+* date => date
+* datetime => timestamp
+* boolean => bool
+* text => varchar(65535)
+* decimal(precision, scale) => decimal(precision, scale)
+* You should also note that the ID column should be of type "bigint". Please see the Redshift documentation for more * details. Here's how we mapped the "users" table for the sample app.
 
-redshift-ruby-tutorial_–_analytics_and_schema_rb_—_redshift-ruby-tutorial_and_3__bash
+![Screenshot](https://13217-presscdn-0-50-pagely.netdna-ssl.com/code/wp-content/uploads/2015/09/redshift-ruby-tutorial_%E2%80%93_analytics_and_schema_rb_%E2%80%94_redshift-ruby-tutorial_and_3__bash.png)
 
 You should also note that we did not map all fields. You'll want to omit sensitive or irrelevant fields or add fields on an as-needed basis to reduce complexity and costs.
 
-Part 2: Extracting, Transforming, and Loading (ETL)
+## Part 2: Extracting, Transforming, and Loading (ETL)
 
-Create an S3 Bucket
+### Create an S3 Bucket
 
 You'll need to create an S3 bucket either via the AWS Console or through their API. For this sample, we've created one called "redshift-ruby-tutorial.
 
-Setup the Sample App
+### Setup the Sample App
 
 We created a sample Rails app for this part. It contains a User table,  some seed data, and a Loader class that will perform ETL. The high-level approach is to output the User data to CSV files, upload the files to an AWS S3 bucket, and then trigger Redshift to load the CSV files.
 
 Let's start by cloning the app:
 
-[code]
+```
 git clone git@github.com:tuesy/redshift-ruby-tutorial.git
 cd redshift-ruby-tutorial
-[/code]
+```
+
 Next, update your environment variables by editing and sourcing the ~/.bash_profile:
 
-_bash_profile_—_redshift-ruby-tutorial
+```
+# redshift-ruby-tutorial
+export REDSHIFT_HOST=redshift-ruby-tutorial.ccmj2nxbsay7.us-east-1.redshift.amazonaws.com
+export REDSHIFT_PORT=5439
+export REDSHIFT_USER=deploy
+export REDSHIFT_PASSWORD=<your password here>
+export REDSHIFT_DATABASE=analytics
+export REDSHIFT_BUCKET=redshift-ruby-tutorial
+```
 
 We're ready to bundle our gems, create our database, and seed the dummy data:
 
-[code]
+```
 bundle install
 bundle exec rake db:setup
-[/code]
+```
+
 Before we run ETL, let's check the connection to Redshift. This should return "0 users" because we haven't loaded any data yet:
 
-[code]
+```
 bundle exec rails c
 RedshiftUser.count
-[/code]
+```
+
 Now let's run ETL and then count users again (there should be some users now):
 
-[code language="ruby"]
+```ruby
 require 'loader'
 Loader.load
 RedshiftUser.count
-[/code]
+```
+
 Here's an example of the output you should see:
 
-[code language="bash"]
+```bash
 ~/git/redshift-ruby-tutorial(master)$ bundle exec rails c
 Loading development environment (Rails 4.2.3)
 irb(main):001:0> RedshiftUser.count
@@ -116,17 +128,19 @@ irb(main):004:0> RedshiftUser.count
 irb(main):005:0> RedshiftUser.first
   RedshiftUser Load (1528.4ms)  SELECT  "users".* FROM "users"  ORDER BY "users"."id" ASC LIMIT 1
 => #<RedshiftUser id: 1, name: "Data", email: "data@enterprise.fed", sign_in_count: 0, current_sign_in_at: nil, last_sign_in_at: nil, current_sign_in_ip: nil, last_sign_in_ip: nil, created_at: nil, updated_at: nil>
-[/code]
-How to Connect to Redshift
+```
+
+### How to Connect to Redshift
 
 Redshift is based on Postgres so we can use a slightly modified ActiveRecord adapter:
 
-[code language="ruby"]
+```ruby
 gem 'activerecord4-redshift-adapter', '~> 0.2.0'
-[/code]
+```
+
 We use an initializer to DRY things up a bit:
 
-[code language="ruby"]
+```ruby
 Rails.application.secrets.redshift_config = {
   host: ENV['REDSHIFT_HOST'],
   port: ENV['REDSHIFT_PORT'],
@@ -135,29 +149,32 @@ Rails.application.secrets.redshift_config = {
   database: ENV['REDSHIFT_DATABASE'],
   adapter: 'redshift'
 }
-[/code]
+```
+
 You can configure each Rails model to connect to a separate database so we created a base class for all the tables we'll use to connect to Redshift:
 
-[code language="ruby"]
+```ruby
 class RedshiftBase < ActiveRecord::Base
   establish_connection Rails.application.secrets.redshift_config
   self.abstract_class = true
 end
-[/code]
+```
+
 For the RedshiftUser class, we'll just need to specify the name of the table, otherwise Rails would look for a table named "redshift_users". This is also necessary because we have our own User class for the local database.
 
-[code language="ruby"]
+```ruby
 class RedshiftUser < RedshiftBase
   self.table_name = :users
 end
-[/code]
+```
+
 With this configured, you can query the table. For associations, you'll have to do some more customizations if you want niceties like "@user.posts".
 
-How to ETL
+### How to ETL
 
 This task is performed by the Loader class. We begin by connecting to AWS and Redshift:
 
-[code language="ruby"]
+```ruby
 # setup AWS credentials
 Aws.config.update({
   region: 'us-east-1',
@@ -174,10 +191,11 @@ db = PG.connect(
   password: ENV['REDSHIFT_PASSWORD'],
   dbname: ENV['REDSHIFT_DATABASE'],
 )
-[/code]
+```
+
 This is the heart of the process. The source data comes from the User table. We're fetching users in fixed-size batches to avoid timeouts. For now, we're querying for all users, but you can modify this to return only active users, for example. Don't be alarmed by all the nested blocks--we're just creating temporary files, generating an array with the values for each column, and then compressing the data using gzip so we can save time and money. We're not doing any transformation here, but you could do things like format a column or generate new columns. We upload each CSV file to our S3 bucket after processing each batch but you could upload after everything is generated if desired.
 
-[code language="ruby"]
+```ruby
 # extract data to CSV files and upload to S3
 User.find_in_batches(batch_size: BATCH_SIZE).with_index do |group, batch|
   Tempfile.open(TABLE) do |f|
@@ -196,10 +214,11 @@ User.find_in_batches(batch_size: BATCH_SIZE).with_index do |group, batch|
     obj.upload_file(f)
   end
 end
-[/code]
+```
+
 Finally, we clear existing data in this Redshift table and tell Redshift to load the new data from S3. Note that we are specifying the column names for the table so that the right data goes to the right columns in the database. We also specify "GZIP" so that Redshift knows that the files are compressed. Using multiple files also allows Redshift to load data in parallel if you have multiple nodes.
 
-[code language="ruby"]
+```ruby
 # clear existing data for this table
 db.exec <<-EOS
 TRUNCATE #{TABLE}
@@ -214,12 +233,13 @@ CSV
 EMPTYASNULL
 GZIP
 EOS
-[/code]
+```
+
 There are other improvements you can add. For example, using a manifest file, you can have full control over which CSVs are loaded. Also, while the current approach truncates and reloads the table on each run, which can be slow, you can do incremental loads.
 
-Links
+### Links
 
-Sample Rails app on Github
-Postico
-AWS Redshift documentation
-activerecord4-redshift-adapter
+* Sample Rails app on Github
+* Postico
+* AWS Redshift documentation
+* activerecord4-redshift-adapter
